@@ -1,0 +1,72 @@
+-- AWR r2toolkit
+-- Regression Analysis Toolkit
+-- Karl Arao, Oracle ACE (bit.ly/karlarao), OCP-DBA, RHCT
+-- http://karlarao.wordpress.com
+--
+-- Description:
+--   This is a performance toolkit that uses AWR data and Linear Regression to identify what metric/statistic is driving the 
+--   database server’s workload. The data points can be very useful for capacity planning giving you informed decisions 
+--   and completely avoiding guesswork!
+--
+-- Notes: 
+--   Portions of "awr_r2_6_populateanalyze.sql" are by Neeraj Bhatia from the paper www.nioug.org/files/Linear_Regression.pdf 
+--   Added/enhanced some more sections of the script and these are as follows:
+--     - Got my AWR workload characterization scripts to populate the X and Y tables
+--     - Facility to systematically analyze the R2 values
+--     - Fixed the stnd_dev of the outlier section
+--   Ideas came from the following sources: 
+--     - Forecasting Oracle Performance by Craig Shallahamer
+--     - Statistics without tears by Derek Rowntree
+-- 
+--   This toolkit contains 7 sections, see brief description below:
+--   - CREATE USER - creates the r2toolkit user
+--   - DROP TABLES - drop the tables for a fresh start
+--   - CREATE THE r2 TABLES - create the main tables
+--   - POPULATE y data - y data is the "dependent value", variable whose value is to be predicted
+--   - ANALYZE r2 VALUES - get the stat names with high r2 values, to have a more accurate analysis
+--   - POPULATE x and residual data - x data is the "independent value", used to predict the value of y
+--   - R2 REPORT - generate the textual report and r2 values with or w/o outliers
+--
+-- Usage: 
+--   1) Unzip the file r2toolkit.zip
+-- 
+--   2) cd r2toolkit
+-- 
+--   3) as SYSBDA or with a DBA role, create the r2toolkit user
+--            @awr_r2_0_createuser.sql
+-- 
+--   4) On SQL*Plus as the r2toolkit user
+--            @run_all.sql
+--      OR 
+--          You can run the following scripts individually
+--            @r2_aas-sysstat.sql
+--            @r2_aas-systemevent.sql  <-- before running,comment out the first two lines
+--
+--   5) Review the *.txt reports
+--
+-- Sample run below:
+-- SQL> @run_all.sql
+-- 
+--       DBID INSTANCE_NUMBER VERSION           DB_NAME   INSTANCE_NAME    HOST_NAME
+-- ---------- --------------- ----------------- --------- ---------------- ----------------------------------------------------------------
+--  250053574               1 11.2.0.1.0        ORA112    ora112           oel5-11g.us.oracle.com
+-- 
+-- 
+--       DBID SNAP_INTERVAL                                                               RETENTION                                                                   TOPNSQL
+-- ---------- --------------------------------------------------------------------------- --------------------------------------------------------------------------- ----------
+--  250053574 +00000 01:00:00.0                                                           +00030 00:00:00.0                                                           DEFAULT
+-- 
+-- 
+-- ... output snipped ... 
+-- 
+-- 
+-- MIN_DATE                      MAX_DATE
+-- ----------------------------- -----------------------------
+-- 2010-nov-05 22:00:29          2010-dec-06 00:00:55
+-- 
+-- Enter the start day (1=sunday 7=saturday) d : 1
+-- Enter the end day (1=sunday 7=saturday) d : 7
+-- Enter the start hour of work (0900) hh24mi : 0900
+-- Enter the end hour of work (1800) hh24mi : 1800
+-- Enter the data range (2010-dec-01 00:00:00) yyyy-mon-dd hh24:mi:ss : 2010-nov-05 22:00:29
+-- Enter the data range (2010-dec-08 23:59:59) yyyy-mon-dd hh24:mi:ss : 2010-dec-06 00:00:55

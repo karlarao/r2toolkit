@@ -1,0 +1,6 @@
+ACCEPT DayOfWeek1 PROMPT 'Enter the start day (1=sunday 7=saturday) d : '
+ACCEPT DayOfWeek2 PROMPT 'Enter the end day (1=sunday 7=saturday) d : '
+ACCEPT Hour1 PROMPT 'Enter the start hour of work (0900) hh24mi : '
+ACCEPT Hour2 PROMPT 'Enter the end hour of work (1800) hh24mi : '
+ACCEPT DataRange1 PROMPT 'Enter the data range (2010-dec-01 00:00:00) yyyy-mon-dd hh24:mi:ss : ' 
+ACCEPT DataRange2 PROMPT 'Enter the data range (2010-dec-08 23:59:59) yyyy-mon-dd hh24:mi:ss : '
